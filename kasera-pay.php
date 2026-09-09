@@ -3,7 +3,7 @@
  * Plugin Name: Kasera Pay for WooCommerce
  * Plugin URI: https://github.com/getkasera/kasera-pay-woocommerce
  * Description: Terima pembayaran QRIS, Virtual Account, dan kartu lewat Kasera Pay Checkout.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: Kasera
  * Author URI: https://pay.kasera.id
  * License: MIT
