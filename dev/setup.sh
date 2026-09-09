@@ -25,6 +25,7 @@ wp theme install storefront --activate
 
 wp option update woocommerce_currency IDR
 wp option update woocommerce_price_num_decimals 0
+wp option update woocommerce_price_thousand_sep .
 wp option update woocommerce_default_country "ID:JK"
 wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
 wp wc tool run install_pages --user=admin
@@ -38,3 +39,5 @@ echo
 echo "store:   http://localhost:8090 (shop at /?post_type=product)"
 echo "admin:   http://localhost:8090/wp-admin (admin / admin123)"
 echo "webhook: set the dashboard webhook URL to http://<reachable-host>:8090/?wc-api=kasera_pay"
+
+wp eval-file /var/www/html/wp-content/plugins/kasera-pay/dev/seed-store.php
