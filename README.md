@@ -34,6 +34,7 @@ Alur pembeli, dari toko sampai kembali lagi — dijalankan dari harness `dev/`:
 - Header `Idempotency-Key` (kunci pesanan + nomor percobaan) mencegah tagihan ganda saat tombol bayar diklik dua kali.
 - Webhook `payment.paid` diverifikasi terhadap header `Kasera-Signature-V1` (HMAC-SHA256 bertimestamp, toleransi 5 menit) sebelum pesanan ditandai lunas. Nominal webhook dicocokkan dengan total pesanan; kalau beda, pesanan masuk *on-hold* untuk diperiksa manual.
 - Event yang bukan milik toko ini (akun yang sama bisa menerima pembayaran dari sumber lain) di-ack tanpa mengubah apa pun.
+- Halaman checkout berbasis blok (bawaan WooCommerce) didukung mulai rilis berikutnya; shortcode klasik `[woocommerce_checkout]` juga tetap jalan.
 
 ## Batasan versi ini
 
