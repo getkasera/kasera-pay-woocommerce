@@ -32,12 +32,10 @@ wp wc tool run install_pages --user=admin
 
 wp option update woocommerce_kasera_pay_settings "$(printf '{"enabled":"yes","title":"QRIS / Virtual Account / Kartu (Kasera Pay)","description":"Bayar dengan QRIS, Virtual Account, atau kartu.","api_key":"%s","signing_secret":"%s","method_codes":""}' "${KASERA_API_KEY:-}" "${KASERA_SIGNING_SECRET:-}")" --format=json
 
-wp wc product create --user=admin --name="Kopi Gayo 250g" --type=simple --regular_price=65000 >/dev/null
-wp wc product create --user=admin --name="Drip Bag Isi 10" --type=simple --regular_price=48000 >/dev/null
+
+wp eval-file /var/www/html/wp-content/plugins/kasera-pay/dev/seed-store.php
 
 echo
 echo "store:   http://localhost:8090 (shop at /?post_type=product)"
 echo "admin:   http://localhost:8090/wp-admin (admin / admin123)"
 echo "webhook: set the dashboard webhook URL to http://<reachable-host>:8090/?wc-api=kasera_pay"
-
-wp eval-file /var/www/html/wp-content/plugins/kasera-pay/dev/seed-store.php
