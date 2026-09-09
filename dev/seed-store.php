@@ -47,26 +47,20 @@ foreach ($catalog as [$name, $price, $photo]) {
     echo "ok: $name\n";
 }
 
+// stock Storefront, minus the blog defaults: no Hello World, no Sample Page,
+// no Recent Posts sidebar. The one CSS line lets the grid use the width the
+// removed sidebar leaves behind.
+foreach (get_posts(['post_type' => ['post', 'page'], 'title' => null, 'numberposts' => -1, 'post_status' => 'any']) as $p) {
+    if (in_array($p->post_title, ['Hello world!', 'Sample Page'], true)) {
+        wp_delete_post($p->ID, true);
+    }
+}
+update_option('sidebars_widgets', ['wp_inactive_widgets' => [], 'sidebar-1' => [], 'array_version' => 3]);
+wp_update_custom_css_post('.content-area { width: 100%; }');
+
 update_option('show_on_front', 'page');
 update_option('page_on_front', wc_get_page_id('shop'));
 update_option('blogdescription', 'Kopi enak, bayar gampang');
 
-wp_update_custom_css_post(<<<'CSS'
-/* minimalist storefront: hide chrome, keep the grid and the cart */
-.storefront-breadcrumb, .woocommerce-products-header, .woocommerce-result-count,
-.woocommerce-ordering, .site-search, .secondary-navigation,
-.storefront-handheld-footer-bar, .site-info, .widget-area,
-.storefront-primary-navigation .menu { display: none !important; }
-.site-header { background: #fff; border-bottom: 1px solid #eee; padding-top: 1.2em; }
-.site-branding { text-align: center; float: none; margin: 0 auto .5em; }
-.site-branding .site-title { font-size: 1.6em; letter-spacing: .02em; }
-.site-description { display: block; text-align: center; color: #888; clip: unset; position: static; height: auto; width: auto; }
-.col-full { max-width: 1080px; }
-.content-area { width: 100% !important; float: none; margin: 0 auto; }
-ul.products li.product img { border-radius: 14px; aspect-ratio: 1 / 1; object-fit: cover; }
-ul.products li.product .woocommerce-loop-product__title { font-size: 1.05em; }
-ul.products li.product .price { color: #111; font-weight: 600; }
-.add_to_cart_button, .single_add_to_cart_button, .checkout-button, #place_order { border-radius: 999px; }
-CSS);
 
 echo "seeded: homepage=shop, css applied\n";
