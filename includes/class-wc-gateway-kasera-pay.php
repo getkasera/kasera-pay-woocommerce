@@ -103,15 +103,21 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
             $body['payment_methods'] = array_values(array_filter(array_map('trim', explode(',', $this->method_codes))));
         }
         $return_url = $order->get_checkout_order_received_url();
-        if (str_starts_with($return_url, 'https://')) { // the API refuses non-https return_url
+        // The API takes https always, and http only on a test key (PAY-441) —
+        // so a localhost store still gets the redirect back while developing.
+        if (str_starts_with($return_url, 'https://') || str_starts_with($this->api_key, 'kp_test_')) {
             $body['return_url'] = $return_url;
         }
 
         // The Idempotency-Key is the only dedup: a double submit replays the
-        // same pending payment request. A replay that comes back no longer
-        // payable (expired/failed) bumps the attempt and creates a fresh one.
+        // same pending payment request. The body hash is part of the key
+        // because WooCommerce resumes a pending order on re-checkout — same
+        // order_key, possibly a changed cart — and replaying the old key with
+        // a new body is a 409, not a payment. A replay that comes back no
+        // longer payable (expired/failed) bumps the attempt for a fresh one.
         $attempt = (int) $order->get_meta('_kasera_pay_attempt');
-        $tx = $this->create_transaction($body, $order->get_order_key() . '-' . $attempt);
+        $key_base = $order->get_order_key() . '-' . substr(md5(wp_json_encode($body)), 0, 12) . '-';
+        $tx = $this->create_transaction($body, $key_base . $attempt);
         if (is_wp_error($tx)) {
             wc_add_notice('Pembayaran gagal dibuat: ' . $tx->get_error_message(), 'error');
             return ['result' => 'failure'];
@@ -119,7 +125,7 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
         if ($tx['status'] !== 'pending') {
             $order->update_meta_data('_kasera_pay_attempt', (string) ($attempt + 1));
             $order->save();
-            $tx = $this->create_transaction($body, $order->get_order_key() . '-' . ($attempt + 1));
+            $tx = $this->create_transaction($body, $key_base . ($attempt + 1));
             if (is_wp_error($tx)) {
                 wc_add_notice('Pembayaran gagal dibuat: ' . $tx->get_error_message(), 'error');
                 return ['result' => 'failure'];
