@@ -64,6 +64,7 @@ wp_update_custom_css_post('.content-area { width: 100%; }');
 wp_update_post(['ID' => wc_get_page_id('cart'), 'post_content' => '[woocommerce_cart]']);
 wp_update_post(['ID' => wc_get_page_id('checkout'), 'post_content' => '[woocommerce_checkout]']);
 
+update_option('woocommerce_coming_soon', 'no');
 update_option('show_on_front', 'page');
 update_option('page_on_front', wc_get_page_id('shop'));
 update_option('blogdescription', 'Kopi enak, bayar gampang');

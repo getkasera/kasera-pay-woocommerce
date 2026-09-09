@@ -2,6 +2,18 @@
 
 Payment gateway [Kasera Pay](https://pay.kasera.id) untuk WooCommerce: pembeli diarahkan ke halaman Kasera Pay Checkout untuk membayar dengan QRIS, Virtual Account, atau kartu, lalu status pesanan terbarui otomatis lewat webhook bertanda tangan.
 
+## Demo
+
+Alur pembeli, dari toko sampai kembali lagi — dijalankan dari harness `dev/`:
+
+| Toko | Checkout WooCommerce |
+|---|---|
+| ![Shop](docs/demo-1-shop.jpg) | ![Checkout](docs/demo-2-checkout.jpg) |
+
+| Halaman Kasera Pay (mode tes) | Kembali ke toko |
+|---|---|
+| ![Kasera Pay Checkout](docs/demo-3-kasera-checkout.jpg) | ![Order received](docs/demo-4-order-received.jpg) |
+
 ## Kebutuhan
 
 - WordPress 6.0+, WooCommerce 8.0+, PHP 8.1+
