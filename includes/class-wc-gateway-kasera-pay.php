@@ -196,9 +196,10 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
         }
 
         // payment_complete is a no-op on an already-paid order, which absorbs
-        // at-least-once redelivery of the same event.
-        $order->payment_complete($data['payment_request_id']);
-        $order->add_order_note('Kasera Pay: lunas (event ' . ($event['id'] ?? '?') . ').');
+        // at-least-once redelivery of the same event; the note follows suit.
+        if ($order->payment_complete($data['payment_request_id'])) {
+            $order->add_order_note('Kasera Pay: lunas (event ' . ($event['id'] ?? '?') . ').');
+        }
         exit('ok');
     }
 

@@ -1,0 +1,54 @@
+name: kasera-pay-wc-dev
+
+x-db-env: &db-env
+  WORDPRESS_DB_HOST: db
+  WORDPRESS_DB_USER: wordpress
+  WORDPRESS_DB_PASSWORD: wordpress
+  WORDPRESS_DB_NAME: wordpress
+
+x-wp-volumes: &wp-volumes
+  - wp:/var/www/html
+  - ..:/var/www/html/wp-content/plugins/kasera-pay
+  - ./mu:/var/www/html/wp-content/mu-plugins
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:php8.3
+    ports:
+      - "8090:80"
+    environment:
+      <<: *db-env
+      # The mu-plugin in ./mu points the gateway here instead of production.
+      KASERA_PAY_API_BASE: http://host.docker.internal:8080
+    volumes: *wp-volumes
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
+
+  cli:
+    image: wordpress:cli-php8.3
+    user: "33:33"
+    environment:
+      <<: *db-env
+      KASERA_PAY_API_BASE: http://host.docker.internal:8080
+    volumes: *wp-volumes
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - wordpress
+    profiles: ["tools"]
+
+volumes:
+  db:
+  wp:

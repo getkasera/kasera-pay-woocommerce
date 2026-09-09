@@ -43,3 +43,7 @@ add_filter('kasera_pay_api_base', fn() => 'http://localhost:8080');
 ## Lisensi
 
 MIT
+
+## Toko dev lokal
+
+`dev/` berisi harness docker-compose: WordPress + WooCommerce + plugin ini, siap uji dalam satu perintah — lihat `dev/setup.sh`.
