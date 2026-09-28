@@ -1,0 +1,5 @@
+/dev export-ignore
+/tests export-ignore
+/docs export-ignore
+/README.md export-ignore
+/.gitattributes export-ignore

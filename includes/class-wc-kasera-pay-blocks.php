@@ -32,7 +32,7 @@ final class WC_Kasera_Pay_Blocks extends AbstractPaymentMethodType
             'kasera-pay-blocks',
             plugins_url('assets/blocks.js', dirname(__FILE__)),
             ['wc-blocks-registry', 'wc-settings', 'wp-element', 'wp-html-entities'],
-            '0.1.0',
+            '0.2.1',
             true
         );
         return ['kasera-pay-blocks'];
