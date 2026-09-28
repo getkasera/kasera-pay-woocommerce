@@ -20,7 +20,7 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
         $this->id                 = 'kasera_pay';
         $this->method_title       = 'Kasera Pay';
         $this->method_description = sprintf(
-            'Pembeli diarahkan ke Kasera Pay Checkout (QRIS, Virtual Account, kartu). '
+            'Pembeli diarahkan ke Kasera Pay Checkout (QRIS, Virtual Account). '
             . 'Atur URL webhook di dashboard Kasera Pay ke: %s',
             esc_html($this->webhook_url())
         );
@@ -51,12 +51,12 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
             'title' => [
                 'title'   => 'Judul di checkout',
                 'type'    => 'text',
-                'default' => 'QRIS / Virtual Account / Kartu (Kasera Pay)',
+                'default' => 'QRIS / Virtual Account (Kasera Pay)',
             ],
             'description' => [
                 'title'   => 'Deskripsi di checkout',
                 'type'    => 'text',
-                'default' => 'Bayar dengan QRIS, Virtual Account, atau kartu.',
+                'default' => 'Bayar dengan QRIS atau Virtual Account.',
             ],
             'api_key' => [
                 'title'       => 'API key',
@@ -170,7 +170,7 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
             exit('signing secret not configured');
         }
         $raw = file_get_contents('php://input');
-        $header = $_SERVER['HTTP_KASERA_SIGNATURE_V1'] ?? '';
+        $header = sanitize_text_field(wp_unslash($_SERVER['HTTP_KASERA_SIGNATURE_V1'] ?? ''));
         if (!kasera_pay_verify_signature($header, $raw, $this->signing_secret)) {
             status_header(400);
             exit('bad signature');

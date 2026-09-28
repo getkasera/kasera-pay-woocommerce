@@ -9,7 +9,7 @@
  * any match accepts. Deliveries older than five minutes are rejected.
  */
 
-defined('ABSPATH') || defined('KASERA_PAY_TEST') || exit;
+defined('ABSPATH') || exit;
 
 function kasera_pay_verify_signature(string $header, string $body, string $secret, ?int $now = null): bool
 {

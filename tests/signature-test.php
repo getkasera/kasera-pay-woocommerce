@@ -3,7 +3,7 @@
 // The reference signature was computed outside PHP (python hmac) so this
 // checks the implementation, not itself.
 
-define('KASERA_PAY_TEST', true);
+define('ABSPATH', __DIR__); // satisfies the plugin's direct-access guard
 require __DIR__ . '/../includes/signature.php';
 
 $secret = 'whsec_testsecret';
