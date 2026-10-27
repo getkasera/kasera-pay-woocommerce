@@ -30,7 +30,7 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
         $this->init_settings();
 
         $this->title          = $this->get_option('title');
-        $this->description    = $this->get_option('description');
+        $this->description    = self::with_delivery_note($this->get_option('description'), $this->get_option('delivery_days'));
         $this->api_key        = trim($this->get_option('api_key'));
         $this->signing_secret = trim($this->get_option('signing_secret'));
         $this->method_codes   = trim($this->get_option('method_codes'));
@@ -58,6 +58,12 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
                 'type'    => 'text',
                 'default' => 'Bayar dengan QRIS atau Virtual Account.',
             ],
+            'delivery_days' => [
+                'title'       => 'Perkiraan pengiriman (hari)',
+                'type'        => 'number',
+                'default'     => '3',
+                'description' => 'Berapa hari setelah bayar pesanan dikirim. Tanggalnya tampil di checkout dan dikirim ke Kasera Pay; wajib untuk pembayaran di atas Rp1.000.000. Isi 0 untuk produk digital yang langsung dikirim.',
+            ],
             'api_key' => [
                 'title'       => 'API key',
                 'type'        => 'password',
@@ -74,6 +80,21 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
                 'description' => 'Dipisah koma, mis. qris,bca_va. Kosongkan untuk menawarkan semua metode yang aktif di akun. Daftar kode ada di GET /v1/payment_methods.',
             ],
         ];
+    }
+
+    /** Today + $days in WIB, as the API wants it (YYYY-MM-DD). */
+    public static function delivery_date($days): string
+    {
+        $days = max(0, (int) $days);
+        return (new DateTimeImmutable('now', new DateTimeZone('Asia/Jakarta')))
+            ->modify('+' . $days . ' days')->format('Y-m-d');
+    }
+
+    /** The checkout description with the delivery date the order is sent with. */
+    public static function with_delivery_note(string $description, $days): string
+    {
+        $date = DateTimeImmutable::createFromFormat('Y-m-d', self::delivery_date($days))->format('d-m-Y');
+        return trim($description . ' Perkiraan pesanan dikirim: ' . $date . '.');
     }
 
     public function is_available(): bool
@@ -98,6 +119,11 @@ class WC_Gateway_Kasera_Pay extends WC_Payment_Gateway
                 'phone' => $order->get_billing_phone(),
             ]),
             'checkout'    => new stdClass(), // hosted Checkout create
+            // Required above Rp1.000.000 since 26 Oct 2026 (PAY-929); the API
+            // ignores both below its line, so they go on every order. The
+            // date is shown to the buyer by with_delivery_note().
+            'delivery_date'        => self::delivery_date($this->get_option('delivery_days')),
+            'delivery_terms_shown' => true,
         ];
         if ($this->method_codes !== '') {
             $body['payment_methods'] = array_values(array_filter(array_map('trim', explode(',', $this->method_codes))));

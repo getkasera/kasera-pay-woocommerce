@@ -3,7 +3,7 @@ Tags: qris, virtual account, payment gateway, indonesia, woocommerce
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.2.1
+Stable tag: 0.3.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -58,6 +58,9 @@ Yes, at [github.com/getkasera/kasera-pay-woocommerce](https://github.com/getkase
 3. The buyer is returned to the store with the order received.
 
 == Changelog ==
+
+= 0.3.0 =
+* Orders above Rp1.000.000 no longer fail: every payment now carries a delivery date (new setting "Perkiraan pengiriman (hari)", default 3), shown to the buyer at checkout.
 
 = 0.2.1 =
 * Sanitize the webhook signature header and tighten direct file access protection.
