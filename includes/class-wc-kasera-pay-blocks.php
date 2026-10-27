@@ -32,7 +32,7 @@ final class WC_Kasera_Pay_Blocks extends AbstractPaymentMethodType
             'kasera-pay-blocks',
             plugins_url('assets/blocks.js', dirname(__FILE__)),
             ['wc-blocks-registry', 'wc-settings', 'wp-element', 'wp-html-entities'],
-            '0.2.1',
+            '0.3.0',
             true
         );
         return ['kasera-pay-blocks'];
@@ -42,7 +42,10 @@ final class WC_Kasera_Pay_Blocks extends AbstractPaymentMethodType
     {
         return [
             'title'       => $this->get_setting('title', 'Kasera Pay'),
-            'description' => $this->get_setting('description', ''),
+            'description' => WC_Gateway_Kasera_Pay::with_delivery_note(
+                (string) $this->get_setting('description', ''),
+                $this->get_setting('delivery_days', '3')
+            ),
             'supports'    => ['products'],
         ];
     }
